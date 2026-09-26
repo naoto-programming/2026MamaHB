@@ -1,0 +1,332 @@
+:root{
+  --night:#141d38;      /* 背景 */
+  --night-2:#1f2b50;    /* 面 */
+  --night-3:#2e3d6b;    /* 境界線 */
+  --table:#182448;      /* 場（サイコロを置く台） */
+  --paper:#f7f0de;      /* 本文 */
+  --muted:#a4aed0;      /* 補足 */
+  --gold:#f5c04a;       /* 手番・強調 */
+  --one:#f0603f;        /* 「1」側 */
+  --eight:#3cc4a0;      /* 「8」側 */
+  --c-point:#f5c04a;    /* カード種別: ポイント */
+  --c-prob:#7fb2ff;     /* カード種別: 確率 */
+  --c-special:#e58ad8;  /* カード種別: 特殊 */
+  --c-dice:#9aa3bd;     /* カード種別: サイコロ */
+  --display:'Dela Gothic One','Hiragino Sans',sans-serif;
+  --body:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',sans-serif;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;min-height:100vh;padding:20px 16px 240px;
+  background:radial-gradient(ellipse at 50% -10%,#2a3a70 0%,var(--night) 60%) fixed,var(--night);
+  color:var(--paper);font-family:var(--body);font-weight:500;line-height:1.6;
+}
+[hidden]{display:none!important;}
+button{font:inherit;cursor:pointer;border:none;}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+.n1{color:var(--one);font-family:var(--display);font-weight:400;}
+.n8{color:var(--eight);font-family:var(--display);font-weight:400;}
+
+.btn-primary{
+  padding:12px 32px;border-radius:999px;background:var(--gold);color:var(--night);
+  font-family:var(--display);font-size:18px;letter-spacing:.08em;
+}
+.btn-primary:hover{background:#ffd069;}
+.btn-secondary{
+  padding:10px 28px;border-radius:999px;background:transparent;color:var(--paper);
+  border:2px solid var(--night-3);font-weight:700;font-size:15px;
+}
+.btn-secondary:hover{border-color:var(--paper);}
+
+/* 目的の数のバッジ */
+.badge{
+  display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;
+  font-family:var(--display);font-size:17px;line-height:1;color:var(--night);flex:none;
+}
+.badge.t1{background:var(--one);}
+.badge.t8{background:var(--eight);}
+
+.target{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.target-label{font-size:11px;font-weight:700;color:var(--muted);}
+
+/* 進み具合の丸 */
+.pip{display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--gold);margin-left:3px;vertical-align:middle;}
+.pip.on{background:var(--gold);}
+
+/* ===== ヘッダー ===== */
+.top{max-width:1000px;margin:0 auto 16px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.title{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(36px,7vw,56px);line-height:1;letter-spacing:.04em;}
+.title .n1,.title .n8{font-family:inherit;}
+.title-sep{color:var(--muted);}
+.title-sub{color:var(--gold);}
+.round-info{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:14px;color:var(--muted);}
+.round-info b{color:var(--paper);font-family:var(--display);font-weight:400;font-size:20px;margin:0 2px;}
+
+main{max-width:1000px;margin:0 auto;}
+
+/* ===== 開始画面 ===== */
+.setup{text-align:center;padding:32px 0 0;}
+.tagline{margin:0 0 32px;font-size:18px;color:var(--muted);}
+.count-field{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:24px;}
+.count-label{font-weight:700;}
+.count-picker{display:flex;gap:8px;}
+.count-picker button{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--night-2);color:var(--paper);border:2px solid var(--night-3);
+  font-family:var(--display);font-size:20px;
+}
+.count-picker button[aria-checked="true"]{background:var(--gold);color:var(--night);border-color:var(--gold);}
+.btn-start{font-size:22px;padding:14px 56px;}
+.howto{
+  list-style:none;counter-reset:step;max-width:520px;margin:48px auto 0;padding:0;text-align:left;
+  display:grid;gap:14px;font-size:15px;line-height:1.8;
+}
+.howto li{counter-increment:step;position:relative;padding-left:44px;}
+.howto li::before{
+  content:counter(step);position:absolute;left:0;top:1px;
+  display:grid;place-items:center;width:28px;height:28px;border-radius:50%;
+  background:var(--night-3);color:var(--gold);font-family:var(--display);font-size:14px;
+}
+.howto b{color:var(--gold);}
+.glossary{max-width:520px;margin:32px auto 0;padding:16px 18px;text-align:left;border:1px solid var(--night-3);border-radius:16px;display:grid;gap:10px;font-size:14px;line-height:1.7;}
+.glossary div{display:grid;grid-template-columns:6.5em 1fr;gap:8px;}
+.glossary dt{font-weight:700;color:var(--gold);}
+.glossary dd{margin:0;}
+
+/* ===== 場 ===== */
+.table{background:var(--table);border:1px solid var(--night-3);border-radius:24px;padding:14px 18px 18px;}
+.table-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--muted);}
+.table-title b{color:var(--paper);font-family:var(--display);font-weight:400;font-size:18px;margin:0 2px;}
+.expect .n1,.expect .n8{font-size:15px;margin-left:8px;}
+.expect .sum{margin-left:10px;color:var(--paper);font-weight:700;}
+
+.stage{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.die{width:76px;text-align:center;}
+.die-face{
+  height:76px;border-radius:18px;overflow:hidden;
+  box-shadow:0 5px 0 rgba(0,0,0,.35);
+}
+/* 振る前: 上が「1」、下が「8」。高さが確率 */
+.die-face.odds{display:grid;}
+.odd{display:flex;align-items:center;justify-content:center;gap:2px;min-height:0;overflow:hidden;color:var(--night);font-size:12px;font-weight:700;}
+.odd b{font-family:var(--display);font-weight:400;font-size:18px;line-height:1;}
+.odd-1{background:var(--one);}
+.odd-8{background:var(--eight);}
+/* 振った後 */
+.die-face.rolled{
+  display:grid;place-items:center;background:var(--paper);
+  font-family:var(--display);font-size:44px;line-height:1;
+}
+.die-face.is-1{color:var(--one);}
+.die-face.is-8{color:var(--eight);}
+.die-face.landed{animation:land .35s ease-out;}
+.die.fixed .die-face{outline:2px solid var(--paper);outline-offset:3px;}
+.die-label{margin-top:8px;font-size:12px;color:var(--muted);}
+.die-note{display:block;font-size:10px;line-height:1.3;}
+.lock{display:table;margin:3px auto 0;padding:0 6px;border-radius:999px;background:var(--paper);color:var(--night);font-size:10px;font-weight:700;white-space:nowrap;}
+@keyframes land{0%{transform:scale(1.25) rotate(-8deg);}100%{transform:none;}}
+
+/* ===== メッセージと履歴 ===== */
+.feed{text-align:center;margin:16px 0 20px;}
+.message{font-size:18px;font-weight:700;min-height:1.6em;margin:0;}
+.message.show{animation:fadein .4s ease-out;}
+.log{list-style:none;margin:4px 0 0;padding:0;font-size:13px;color:var(--muted);}
+.log li:nth-child(2){opacity:.7;}
+.log li:nth-child(n+3){opacity:.45;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+/* ===== プレイヤー ===== */
+.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.seat{
+  background:var(--night-2);border-radius:16px;padding:12px 14px 14px;
+  border-left:5px solid var(--team);transition:transform .2s,box-shadow .2s;
+}
+.seat.t1{--team:var(--one);}
+.seat.t8{--team:var(--eight);}
+.seat.active{box-shadow:0 0 0 3px var(--gold);transform:translateY(-3px);}
+.seat-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px 8px;}
+.seat-name{font-weight:700;}
+.seat-points{font-family:var(--display);font-size:28px;line-height:1.3;margin-top:2px;}
+.seat-points small,.total small{font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted);margin-left:4px;}
+.seat-stats{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0;font-size:13px;}
+.seat-stats div{display:flex;gap:6px;}
+.seat-stats dt{color:var(--muted);}
+.seat-stats dd{margin:0;font-weight:700;}
+
+/* 場に出したポイント系カード（プレイヤー欄・結果で共通） */
+.chips-head{margin:10px 0 4px;font-size:11px;font-weight:700;color:var(--muted);}
+.chips-head small{font-size:10px;font-weight:500;}
+.chips{list-style:none;margin:0;padding:0;display:grid;gap:5px;}
+.row-main .chips{margin-top:8px;}
+.chip{
+  display:grid;grid-template-columns:20px 1fr;gap:6px;align-items:start;
+  background:rgba(245,192,74,.12);border-radius:8px;padding:5px 8px;font-size:12px;line-height:1.45;
+}
+.chip-body b{margin-right:6px;}
+.chip-eff{font-weight:700;word-break:keep-all;overflow-wrap:anywhere;}
+.chip-cond{display:block;font-size:11px;opacity:.75;}   /* 条件は2行目に小さく */
+.chip-no{
+  display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  background:var(--gold);color:var(--night);font-size:11px;font-weight:700;
+}
+.chip.done{background:var(--gold);color:var(--night);font-weight:700;}
+.chip.done .chip-no{background:var(--night);color:var(--gold);}
+.chip.miss{opacity:.45;text-decoration:line-through;}
+/* 判定中の1枚 */
+.chip.judging{
+  opacity:1;outline:2px solid var(--paper);outline-offset:1px;animation:judge .45s ease-out;
+  scroll-margin:16px 0 200px;  /* 画面下の固定バーに隠れない位置で止める */
+}
+@keyframes judge{0%{transform:scale(1.08);}100%{transform:none;}}
+
+/* 判定でポイントが動いたとき */
+.delta{
+  display:inline-block;margin-left:8px;padding:0 8px;border-radius:999px;vertical-align:4px;
+  font-family:var(--body);font-size:14px;font-weight:700;animation:pop .5s ease-out;
+}
+.delta.up{background:var(--gold);color:var(--night);}
+.delta.down{background:#5b2436;color:#ffc7c7;}
+@keyframes pop{0%{transform:translateY(6px) scale(.8);opacity:0;}60%{transform:translateY(-3px) scale(1.1);opacity:1;}100%{transform:none;}}
+
+/* ===== 手札（画面下に固定） ===== */
+.hand-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:5;
+  padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  background:rgba(20,29,56,.95);backdrop-filter:blur(6px);border-top:1px solid var(--night-3);
+}
+.hand-head{
+  display:flex;justify-content:space-between;align-items:center;gap:6px 16px;flex-wrap:wrap;
+  max-width:1000px;margin:0 auto 8px;font-size:14px;
+}
+.hand-name,.hand-next{display:flex;align-items:center;gap:8px;}
+.hand-name b{font-size:16px;}
+.hand-next{font-size:16px;}
+.hand-next b{font-family:var(--display);font-weight:400;font-size:22px;}
+.hand-left{color:var(--gold);font-weight:700;}
+.hand{
+  display:flex;gap:10px;max-width:1000px;margin:0 auto;padding:4px 2px 2px;
+  overflow-x:auto;scroll-snap-type:x mandatory;
+}
+.hand-bar.handover .hand-head{justify-content:center;}
+.hand .begin{margin:8px auto 12px;padding:14px 56px;font-size:20px;}
+.hand-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;}
+.hand-note{font-size:11px;color:var(--muted);}
+.detail-toggle{
+  padding:3px 12px;border-radius:999px;background:transparent;color:var(--paper);
+  border:1px solid var(--night-3);font-size:12px;font-weight:700;
+}
+.detail-toggle[aria-pressed="true"]{background:var(--paper);color:var(--night);border-color:var(--paper);}
+.card{
+  flex:0 0 172px;min-height:124px;padding:9px 12px 11px;border-radius:12px;text-align:left;
+  display:flex;flex-direction:column;gap:4px;scroll-snap-align:start;
+  background:var(--paper);color:var(--night);border-top:7px solid var(--kind);
+  transition:transform .15s;
+}
+.card:hover{transform:translateY(-5px);}
+.card.type-point{--kind:var(--c-point);}
+.card.type-prob{--kind:var(--c-prob);}
+.card.type-special{--kind:var(--c-special);}
+.card.type-dice{--kind:var(--c-dice);}
+.card-top{display:flex;align-items:center;gap:6px;}
+.stars{margin-left:auto;flex:none;font-size:11px;letter-spacing:-1px;color:#9aa3bd;}
+.card.rarity-2 .stars{color:#4f7fd6;}
+.card.rarity-3 .stars{color:#d49a12;}
+/* レアカードは縁を光らせる */
+.card.rarity-3{box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(245,192,74,.45);}
+.card-type{
+  flex:none;font-size:10px;font-weight:700;
+  background:var(--kind);color:var(--night);border-radius:999px;padding:0 7px;
+}
+.card-name{margin-top:4px;font-size:14px;font-weight:700;line-height:1.3;color:#4b5270;}
+/* 名前 → 効果（一番大きく）→ 条件（小さく灰色）の順に読む */
+.card-effect{font-size:18px;font-weight:700;line-height:1.3;letter-spacing:.01em;
+  word-break:keep-all;overflow-wrap:anywhere;}  /* 「+掛け金」などを途中で切らず、空白の位置で折り返す */
+.card-cond{margin-top:auto;padding-top:6px;border-top:1px solid #e3dac2;font-size:11px;line-height:1.4;color:#6a7190;}
+.card-desc{margin-top:auto;padding-top:6px;border-top:1px dashed #cfc6ad;font-size:11px;line-height:1.5;color:#4b5270;}
+
+/* ===== ラウンド結果 ===== */
+.round-result{
+  max-width:720px;margin:0 auto 24px;background:var(--night-2);border-radius:20px;padding:20px 24px;
+  border:1px solid var(--night-3);animation:fadein .3s ease-out;scroll-margin-top:16px;
+}
+.round-result h2{margin:0 0 12px;font-family:var(--display);font-weight:400;font-size:24px;}
+.result-dice{display:flex;flex-wrap:wrap;gap:6px;}
+.mini{
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:var(--paper);font-family:var(--display);font-size:18px;
+}
+.mini.is-1{color:var(--one);}
+.mini.is-8{color:var(--eight);}
+.result-summary{display:flex;flex-wrap:wrap;gap:4px 18px;margin:10px 0 8px;font-weight:700;}
+.result-rows{list-style:none;margin:0;padding:0;}
+.result-row{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:14px 0;border-top:1px solid var(--night-3);}
+.rank{font-family:var(--display);font-size:26px;line-height:1.1;color:var(--muted);}
+.rank small{font-family:var(--body);font-size:12px;margin-left:1px;}
+.result-row.lead .rank{color:var(--gold);}
+.row-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;}
+.row-name{font-weight:700;font-size:16px;}
+.row-head .badge{width:24px;height:24px;font-size:13px;}
+.gain{font-size:14px;font-weight:700;color:var(--muted);}
+.gain.up{color:var(--gold);}
+.total{margin-left:auto;font-family:var(--display);font-size:20px;}
+.no-cards{margin:6px 0 0;font-size:12px;color:var(--muted);}
+.result-note{margin:4px 0 16px;font-size:12px;color:var(--muted);}
+.round-result .btn-primary{display:block;margin:0 auto;}
+
+/* ===== スマホ ===== */
+@media (max-width:560px){
+  body{padding-bottom:220px;}
+  .table{padding:12px 12px 14px;border-radius:18px;}
+  .stage{gap:8px;}
+  .die{width:58px;}
+  .die-face{height:58px;border-radius:14px;}
+  .die-face.rolled{font-size:34px;}
+  .odd{font-size:10px;}
+  .odd b{font-size:14px;}
+  .log li:nth-child(n+3){display:none;}
+  .players{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+  .seat{padding:10px 10px 12px;}
+  .seat-points{font-size:22px;}
+  .card{flex-basis:144px;min-height:104px;}
+  .card-effect{font-size:16px;}
+  .round-result{padding:16px;}
+  .glossary div{grid-template-columns:1fr;gap:0;}
+  .result-row{grid-template-columns:40px 1fr;}
+  .rank{font-size:20px;white-space:nowrap;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;}
+}
+.guard-tag{white-space:nowrap;margin-left:6px;padding:0 7px;border-radius:999px;background:var(--c-special);color:var(--night);font-size:11px;font-weight:700;vertical-align:2px;}
+.judge-line{font-weight:700;font-size:15px;}
+.judge-line.ok{color:var(--gold);}
+.judge-line.ng{color:var(--muted);}
+
+/* ===== 全体イベントと役の一覧（場の下） ===== */
+.table-foot{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--night-3);}
+.events-box h3{margin:0 0 8px;font-size:13px;color:var(--paper);}
+.events-box h3 small{font-weight:500;color:var(--muted);margin-left:4px;}
+.events{list-style:none;margin:0;padding:0;display:grid;gap:4px;}
+.event{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:start;font-size:12px;line-height:1.5;background:var(--night-2);border-radius:8px;padding:4px 10px;border-left:4px solid var(--ev);}
+.event.kind-dice{--ev:var(--c-prob);}
+.event.kind-rule{--ev:var(--c-special);}
+.event.kind-points{--ev:var(--gold);}
+.event b{font-size:13px;}
+.event-no{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ev);color:var(--night);font-size:11px;font-weight:700;}
+.event-empty{font-size:12px;color:var(--muted);}
+.yaku-box{font-size:12px;}
+.yaku-box summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--gold);}
+.yaku-note{margin:6px 0;color:var(--muted);}
+.yaku-list{list-style:none;margin:0;padding:0;display:grid;gap:4px;}
+.yaku-list li{display:grid;grid-template-columns:6.5em 1fr auto;gap:8px;align-items:baseline;}
+.yaku-pts{font-weight:700;color:var(--gold);white-space:nowrap;}
+/* 役・イベントに関わるサイコロ */
+.die.hl .die-face{outline:3px solid var(--gold);outline-offset:3px;animation:judge .45s ease-out;}
+.die.hl{scroll-margin:16px 0 200px;}
+.result-extra{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 8px;font-size:13px;color:var(--muted);}
+.result-extra b{color:var(--paper);}
+@media (max-width:560px){
+  .table-foot{grid-template-columns:1fr;}
+  .yaku-list li{grid-template-columns:5.5em 1fr;}
+  .yaku-pts{grid-column:2;}
+}

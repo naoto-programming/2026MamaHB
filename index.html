@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>一か八か・リベンジ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="top">
+  <h1 class="title"><span class="n1">一</span>か<span class="n8">八</span>か<span class="title-sep">・</span><span class="title-sub">リベンジ</span></h1>
+  <div class="round-info" id="roundDisplay"></div>
+</header>
+
+<main>
+  <!-- 開始画面 -->
+  <section class="setup" id="setupPanel">
+    <p class="tagline">1 と 8、最後に多く出るのはどっちだ</p>
+
+    <div class="count-field">
+      <span class="count-label" id="countLabel">人数</span>
+      <div class="count-picker" id="countPicker" role="radiogroup" aria-labelledby="countLabel"></div>
+    </div>
+    <button class="btn-primary btn-start" id="startBtn">スタート</button>
+
+    <ol class="howto">
+      <li>全員に<b>目的の数</b>（<span class="n1">1</span> か <span class="n8">8</span>）が半数ずつ割り当てられ、手札が5枚配られます</li>
+      <li>自分の手番では、手札から<b>2枚</b>出します。出した分は補充されます</li>
+      <li>サイコロ3個から始まります。全員が3回ずつ手番を終えたら、場のサイコロを全部振ります（これを3ラウンド）</li>
+      <li>ターンが一巡するたびに<b>全体イベント</b>が1つ公開されます。サイコロを振った後に起きます</li>
+      <li>振った後、サイコロの並びで<b>役</b>を判定し、次に場の<b>ポイント系カード</b>を出した順に判定します</li>
+      <li>次のラウンドも、サイコロ・手札・場のカード・全体イベントはそのまま。<b>場のポイント系カードは毎ラウンド判定</b>されます</li>
+    </ol>
+
+    <dl class="glossary">
+      <div><dt>目的の数</dt><dd>自分が出てほしい数（<span class="n1">1</span> か <span class="n8">8</span>）。ゲームの最初に割り当てます</dd></div>
+      <div><dt>味方・相手</dt><dd>味方は自分と同じ目的の数の人、相手は違う目的の数の人</dd></div>
+      <div><dt>掛け金</dt><dd>最初は10。「+掛け金×2」のカードは、掛け金が10なら+20、20なら+40。「掛け金アップ」で増えます</dd></div>
+      <div><dt>レア度</dt><dd>カード右上の ★ の数。★ が多いカードほど引きにくい</dd></div>
+      <div><dt>役</dt><dd>サイコロの並びの形（例: 1 が3個続けて並ぶ「トリプル 1」）。成立すると、その目が目的の数の人にポイント</dd></div>
+      <div><dt>判定の順番</dt><dd>ポイント系カードは場に出した順に判定します。「半分」や「最下位」は、その時点のポイントで決まります</dd></div>
+    </dl>
+  </section>
+
+  <!-- ゲーム画面 -->
+  <section id="gamePanel" hidden>
+    <div class="table">
+      <div class="table-head" id="tableHead"></div>
+      <div class="stage" id="stage"></div>
+      <div class="table-foot">
+        <section class="events-box" aria-labelledby="eventsTitle">
+          <h3 id="eventsTitle">全体イベント<small>（振った後に毎ラウンド起きる）</small></h3>
+          <ol class="events" id="eventList"></ol>
+        </section>
+        <details class="yaku-box">
+          <summary>役の一覧</summary>
+          <p class="yaku-note">サイコロの並び（サイコロ1から順）で判定します。ポイントは掛け金に関係なく決まっています</p>
+          <ul class="yaku-list" id="yakuList"></ul>
+        </details>
+      </div>
+    </div>
+
+    <div class="feed">
+      <p class="message" id="message" aria-live="polite"></p>
+      <ol class="log" id="log" aria-label="これまでの行動"></ol>
+    </div>
+
+    <div class="round-result" id="roundResult" hidden>
+      <h2 id="resultTitle">ラウンド結果</h2>
+      <div class="result-dice" id="resultDice"></div>
+      <p class="result-summary" id="resultSummary"></p>
+      <p class="result-extra" id="resultExtra"></p>
+      <ol class="result-rows" id="resultRows"></ol>
+      <p class="result-note">カード左の数字は判定した順番です。金色が達成、薄い取り消し線が不発です</p>
+      <button class="btn-primary" id="nextRoundBtn">次のラウンドへ</button>
+    </div>
+
+    <div class="players" id="players"></div>
+  </section>
+</main>
+
+<section class="hand-bar" id="handBar" hidden aria-label="手札">
+  <div class="hand-head" id="handHead"></div>
+  <div class="hand" id="hand"></div>
+</section>
+
+<!-- 読み込み順に依存関係あり: 設定 → 状態 → カード → 役 → 全体イベント → 描画 → 進行 -->
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/yaku.js"></script>
+<script src="js/events.js"></script>
+<script src="js/render.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
